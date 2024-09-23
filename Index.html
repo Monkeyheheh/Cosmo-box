@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Themed Website</title>
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1506748686214-e9bf3f0c6d5e') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        nav button {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+        .tab {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Cosmic Calculator & Quran Translation</h1>
+</header>
+
+<nav>
+    <button onclick="showTab('mathTab')">Math Calculator</button>
+    <button onclick="showTab('quranTab')">Quran Translation</button>
+</nav>
+
+<div id="mathTab" class="tab active">
+    <h2>Math Calculator</h2>
+    <input type="text" id="mathInput" placeholder="Enter math (e.g., 9 + 9)">
+    <button onclick="calculate()">Calculate</button>
+    <p id="mathResult"></p>
+</div>
+
+<div id="quranTab" class="tab">
+    <h2>Quran Translation</h2>
+    <div id="quranContent">Loading...</div>
+</div>
+
+<script>
+    function showTab(tabId) {
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    function calculate() {
+        const input = document.getElementById('mathInput').value;
+        try {
+            const result = eval(input); // Caution: eval can be dangerous with untrusted input
+            document.getElementById('mathResult').innerText = `Result: ${result}`;
+        } catch (error) {
+            document.getElementById('mathResult').innerText = 'Error in calculation';
+        }
+    }
+
+    async function fetchQuranTranslation() {
+        const response = await fetch('https://api.quran.com/v4/verses?translations=131');
+        const data = await response.json();
+        const content = data.verses.map(verse => `<p>${verse.text} (${verse.translation.text})</p>`).join('');
+        document.getElementById('quranContent').innerHTML = content;
+    }
+
+    // Load Quran translation on page load
+    window.onload = fetchQuranTranslation;
+</script>
+
+</body>
+</html>
